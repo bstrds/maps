@@ -10,7 +10,10 @@ import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import android.support.v4.app.Fragment;
 
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -61,7 +64,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 	
 					index = r.nextInt(num);
 					point(lat[index], lon[index]);
-					Log.e("TIME", ""+System.currentTimeMillis());
 					handler.postDelayed(this, 5000);
 					
 				}
