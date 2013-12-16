@@ -1,5 +1,7 @@
 package cs.aueb.maps;
 
+import java.util.Random;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -9,6 +11,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -38,43 +41,32 @@ import com.google.android.gms.maps.model.MarkerOptions;
 					getFragmentManager().findFragmentById(
 					R.id.map)).getMap();
 			
-			
-			
+			for(int i=0; i<lat.length; i++) {	
+				marker = new MarkerOptions().position(new LatLng(lat[i], lon[i])).title(title[i]).snippet(msg[i]);
+				mMap.addMarker(marker);
+			}	
 			
 			/*
-			CameraPosition cameraPosition = new CameraPosition.Builder().target(
-			  new LatLng(17.385044, 78.486671)).zoom(12).build();
-			  
-			googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+			
 			
 			*/
-			
-			point(lat[0], lon[0], title[0], msg[0]);
-			
-			
-		//	point(lat[1], lon[1], title[1], msg[1]);
-			
 		
+			
 			t = new Thread(new RandomPoint());
-			t.start(); 
-			/*
-			try {
-				sleep(8000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			*/
+			t.start();  
+			
 			
 			
 		}
 		
-		public void point(double lat, double lon, String title, String msg) {
+		public void point(double lat, double lon) {
 			
 			// create marker
-			marker = new MarkerOptions().position(new LatLng(lat, lon)).title(title);
-			mMap.addMarker(marker);
 			
+			CameraPosition cameraPosition = new CameraPosition.Builder().target(
+					  new LatLng(lat, lon)).zoom(13).build();
+					  
+					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 			/*
 			
 			Log.e("WTF", "point 1");
@@ -124,19 +116,28 @@ import com.google.android.gms.maps.model.MarkerOptions;
 		
 		private class RandomPoint implements Runnable {
 			
+			Random r = new Random();
+			int num = lat.length;
+			int index;
 			
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				try {
-					Thread.sleep(4000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				
+				index = r.nextInt(num);
+				
+				point(lat[index], lon[index]);
+				
+				while(true) {
+					try {
+						Thread.sleep(4000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
 				}
-				Log.e("WTF", "point a1");
-				point(lat[1], lon[1], title[1], msg[1]);
-				Log.e("WTF", "point a2");
 			}
 			
 		}
