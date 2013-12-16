@@ -4,24 +4,25 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.SupportMapFragment;
+
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-	public class MainActivity extends FragmentActivity {
+	public class MainActivity extends Activity {
 		
 		Thread t;
 		GoogleMap mMap;
 		GoogleMap tempmap;
-		double[] lat, lon;
-		String[] title, msg;
+		static double[] lat, lon;
+		static String[] title, msg;
 		LatLng temp;
 		MarkerOptions marker;
 		
@@ -31,10 +32,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.activity_main);
 	
-			lat = new double[]{-33.867,40.714353};
-			lon = new double[]{151.206, -74.005973};
-			title = new String[]{"Sydney", "New York"};
-			msg = new String[]{"fsdfds", "sdass"};
+			lat = new double[]{-33.867,40.714353, 52.066, 40.996484, 39.293391};
+			lon = new double[]{151.206, -74.005973, 4.292107, 28.978271, -76.587811};
+			title = new String[]{"Sydney", "New York", "The Hague", "Istanbul", "Baltimore"};
+			msg = new String[]{"filthy southern peasants", "hipsters", "V2 funland", "swagSWAGswag", "All in the game yo, all in the game."};
 			
 			
 			mMap = ((MapFragment)
@@ -45,100 +46,32 @@ import com.google.android.gms.maps.model.MarkerOptions;
 				marker = new MarkerOptions().position(new LatLng(lat[i], lon[i])).title(title[i]).snippet(msg[i]);
 				mMap.addMarker(marker);
 			}	
-			
-			/*
-			
-			
-			*/
 		
-			
-			t = new Thread(new RandomPoint());
-			t.start();  
-			
-			
-			
+			final Handler handler = new Handler(Looper.getMainLooper());
+			handler.post(new Runnable(){
+				
+				Random r = new Random();
+				int num = lat.length;
+				int index;
+				
+				@Override
+				public void run() {
+	
+					index = r.nextInt(num);
+					point(lat[index], lon[index]);
+					Log.e("TIME", ""+System.currentTimeMillis());
+					handler.postDelayed(this, 5000);
+					
+				}
+			});	
 		}
 		
-		public void point(double lat, double lon) {
-			
-			// create marker
+		public void point(double lat, double lon) {		
 			
 			CameraPosition cameraPosition = new CameraPosition.Builder().target(
 					  new LatLng(lat, lon)).zoom(13).build();
 					  
 					mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-			/*
-			
-			Log.e("WTF", "point 1");
-			temp = new LatLng(lat, lon);
-			Log.e("WTF", "point 2");
-			
-			setUpMapIfNeeded();
-			Log.e("WTF", "point 2.5");
-			
-		
-			Log.e("WTF", "point 3");
-			//mMap.setMyLocationEnabled(true);
-			Log.e("WTF", "point 4");
-			
-			mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(temp, 13));
-			Log.e("WTF", "point 5");
-			
-			mMap.addMarker(new MarkerOptions().title(title)
-					.snippet(msg)
-					.position(temp));
-					*/
-			
 		}
 		
-		private void setUpMapIfNeeded() {
-	        // Do a null check to confirm that we have not already instantiated the map.
-	        if (mMap == null) {
-	            // Try to obtain the map from the SupportMapFragment.
-	            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-	                    .getMap();
-	            // Check if we were successful in obtaining the map.
-	            if (mMap != null) {
-	                setUpMap();
-	            }
-	        }
-	    }
-
-	    /**
-	     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-	     * just add a marker near Africa.
-	     * <p>
-	     * This should only be called once and when we are sure that {@link #mMap} is not null.
-	     */
-	    private void setUpMap() {
-	      //  mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
-	    }
-		
-		private class RandomPoint implements Runnable {
-			
-			Random r = new Random();
-			int num = lat.length;
-			int index;
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				
-				index = r.nextInt(num);
-				
-				point(lat[index], lon[index]);
-				
-				while(true) {
-					try {
-						Thread.sleep(4000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					
-				}
-			}
-			
-		}
 	}
